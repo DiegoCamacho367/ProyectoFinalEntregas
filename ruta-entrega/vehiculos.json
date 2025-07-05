@@ -1,0 +1,43 @@
+[ {
+  "id" : "VEH1",
+  "placa" : "MK-RED-01",
+  "modelo" : "Kart-Standard",
+  "color" : "Rojo",
+  "marca" : "Nintendo",
+  "capacidadCarga" : 200.0
+}, {
+  "id" : "VEH2",
+  "placa" : "MK-GREEN-02",
+  "modelo" : "Kart-Standard",
+  "color" : "Verde",
+  "marca" : "Nintendo",
+  "capacidadCarga" : 180.0
+}, {
+  "id" : "VEH3",
+  "placa" : "MK-PINK-03",
+  "modelo" : "Peach-Mobile",
+  "color" : "Rosa",
+  "marca" : "Nintendo",
+  "capacidadCarga" : 160.0
+}, {
+  "id" : "VEH4",
+  "placa" : "MK-MUSH-04",
+  "modelo" : "Toad-Racer",
+  "color" : "Blanco",
+  "marca" : "Nintendo",
+  "capacidadCarga" : 150.0
+}, {
+  "id" : "VEH5",
+  "placa" : "MK-BLUE-032",
+  "modelo" : "motocicleta",
+  "color" : "azul",
+  "marca" : "zelda",
+  "capacidadCarga" : 3000.0
+}, {
+  "id" : "VEH6",
+  "placa" : "qsdad",
+  "modelo" : "cafe",
+  "color" : "azul",
+  "marca" : "zelda",
+  "capacidadCarga" : 123123.0
+} ]

@@ -1,0 +1,32 @@
+[ {
+  "id" : "DET1",
+  "rutaId" : "RUT1",
+  "direccion" : "Cl. 68D Bis Sur #49F-70",
+  "descripcion" : "Entrega de marihuana medicinal",
+  "latitud" :4.737498,
+  "longitud" :-74.053155
+
+}, {
+  "id": "DET2",
+    "rutaId": "RUT2",
+    "direccion": "Calle 41 Sur #85-03, Bogotá",
+    "descripcion": "Entrega paquete Mario Kart",
+    "latitud": 4.596268,
+    "longitud": -74.151721
+  
+}, {
+   "id": "DET3",
+    "rutaId": "RUT2",
+    "direccion": "Carrera 80 #10A-15 Sur, Bogotá",
+    "descripcion": "Entrega audífonos",
+    "latitud": 4.608333,
+    "longitud": -74.172222
+},
+{
+     "id": "DET4",
+    "rutaId": "RUT2",
+    "direccion": "Calle 57 Sur #73B-14, Bogotá",
+    "descripcion": "Entrega videojuego FIFA",
+    "latitud": 4.570924,
+    "longitud": -74.168220
+  }]

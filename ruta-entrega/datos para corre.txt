@@ -1,0 +1,7 @@
+java -jar target/ruta-entrega-0.0.1-SNAPSHOT.jar
+mvn clean package
+mvn spring-boot:run
+mvn clean install
+mvn install     
+ mvn dependency:resolve
+mvn clean install -U  

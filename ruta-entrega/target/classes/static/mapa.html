@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mapa de Ruta de Entregas</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Coordenadas de la sede tecnológica
+    const bodega = [4.5806037, -74.1579202];
+
+    // Iniciamos el mapa centrado en la bodega con zoom 16
+    const map = L.map('map').setView(bodega, 16);
+
+    // Capa base OSM
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Marcador de la bodega
+    L.marker(bodega)
+      .addTo(map)
+      .bindPopup("Universidad Distrital Sede Tecnológica - Punto fijo de salida")
+      .openPopup();
+  </script>
+</body>
+</html>

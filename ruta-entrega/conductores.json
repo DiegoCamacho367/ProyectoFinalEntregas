@@ -1,0 +1,29 @@
+[ {
+  "id" : "CDT1",
+  "nombres" : "Mario",
+  "apellidos" : "Mario",
+  "numeroLicencia" : "MK-001",
+  "telefono" : "3001112233",
+  "correo" : "mario@mariokart.com"
+}, {
+  "id" : "CDT2",
+  "nombres" : "Luigi",
+  "apellidos" : "Mario",
+  "numeroLicencia" : "MK-002",
+  "telefono" : "3002223344",
+  "correo" : "luigi@mariokart.com"
+}, {
+  "id" : "CDT3",
+  "nombres" : "Princess",
+  "apellidos" : "Peach",
+  "numeroLicencia" : "MK-003",
+  "telefono" : "3003334455",
+  "correo" : "peach@mariokart.com"
+}, {
+  "id" : "CDT4",
+  "nombres" : "Toad",
+  "apellidos" : "Mushroom",
+  "numeroLicencia" : "MK-004",
+  "telefono" : "3004445566",
+  "correo" : "toad@mariokart.com"
+} ]

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Vehículos</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body class="container mt-4">
+  <h1 class="mb-3">Gestión de Vehículos</h1>
+
+  <h3>Registrar nuevo vehículo</h3>
+  <form id="formVehiculo" class="mb-4">
+    <div class="mb-2">
+      <input type="text" id="placa" class="form-control" placeholder="Placa" required />
+    </div>
+    <div class="mb-2">
+      <input type="text" id="modelo" class="form-control" placeholder="Modelo" required />
+    </div>
+    <div class="mb-2">
+      <input type="text" id="color" class="form-control" placeholder="Color" required />
+    </div>
+    <div class="mb-2">
+      <input type="text" id="marca" class="form-control" placeholder="Marca" required />
+    </div>
+    <div class="mb-2">
+      <input type="number" id="capacidad" class="form-control" placeholder="Capacidad de carga" required />
+    </div>
+    <button type="submit" class="btn btn-success">Registrar vehículo</button>
+  </form>
+
+  <h3>Listado de Vehículos</h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Placa</th>
+        <th>Modelo</th>
+        <th>Color</th>
+        <th>Marca</th>
+        <th>Capacidad (Kg)</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaVehiculos"></tbody>
+  </table>
+
+  <script>
+    const tabla = document.getElementById("tablaVehiculos");
+    const form = document.getElementById("formVehiculo");
+
+    function cargarVehiculos() {
+      fetch("http://localhost:8080/vehiculos")
+        .then(res => res.json())
+        .then(data => {
+          tabla.innerHTML = "";
+          data.forEach(v => {
+            tabla.innerHTML += `
+              <tr>
+                <td>${v.placa}</td>
+                <td>${v.modelo}</td>
+                <td>${v.color}</td>
+                <td>${v.marca}</td>
+                <td>${v.capacidadCarga}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm" onclick="eliminarVehiculo('${v.placa}')">Eliminar</button>
+                </td>
+              </tr>
+            `;
+          });
+        });
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const nuevo = {
+        placa: document.getElementById("placa").value,
+        modelo: document.getElementById("modelo").value,
+        color: document.getElementById("color").value,
+        marca: document.getElementById("marca").value,
+        capacidadCarga: document.getElementById("capacidad").value
+      };
+      fetch("http://localhost:8080/vehiculos/registrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevo)
+      })
+      .then(() => {
+        form.reset();
+        cargarVehiculos();
+      });
+    });
+
+    function eliminarVehiculo(placa) {
+      fetch(`http://localhost:8080/vehiculos/eliminar/${placa}`, { method: "DELETE" })
+        .then(() => cargarVehiculos());
+    }
+
+    cargarVehiculos();
+  </script>
+</body>
+</html>

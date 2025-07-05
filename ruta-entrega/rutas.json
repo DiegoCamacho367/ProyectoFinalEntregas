@@ -1,0 +1,13 @@
+[ {
+  "id" : "RUT1",
+  "conductorId" : "CDT1",
+  "vehiculoId" : "VEH1",
+  "fecha" : "2025-07-06",
+  "nombreRuta" : "Copa champinesca"
+}, {
+  "id" : "RUT2",
+  "conductorId" : "CDT2",
+  "vehiculoId" : "VEH2",
+  "fecha" : "2025-04-02",
+  "nombreRuta" : "Carrera Fantasma"
+} ]
