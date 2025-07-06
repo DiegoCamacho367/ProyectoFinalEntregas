@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Rutas Programadas</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body class="container mt-4">
+  <h1 class="mb-4">Gestión de Rutas Programadas</h1>
+
+  <h3>Registrar nueva ruta</h3>
+  <form id="formRuta" class="mb-4">
+    <div class="mb-2">
+      <input type="text" id="nombreRuta" class="form-control" placeholder="Nombre de la Ruta" required />
+    </div>
+    <div class="mb-2">
+      <input type="date" id="fecha" class="form-control" required />
+    </div>
+    <div class="mb-2">
+      <select id="conductor" class="form-control" required>
+        <option value="">Seleccionar conductor</option>
+      </select>
+    </div>
+    <div class="mb-2">
+      <select id="vehiculo" class="form-control" required>
+        <option value="">Seleccionar vehículo</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">Registrar ruta</button>
+  </form>
+
+  <h3>Listado de Rutas Programadas</h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Fecha</th>
+        <th>Conductor</th>
+        <th>Vehículo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaRutas"></tbody>
+  </table>
+
+  <script>
+    const tabla = document.getElementById("tablaRutas");
+    const form = document.getElementById("formRuta");
+    const selectConductor = document.getElementById("conductor");
+    const selectVehiculo = document.getElementById("vehiculo");
+    let modo = "crear";
+    let idEditar = null;
+
+    let listaConductores = [];
+    let listaVehiculos = [];
+
+    function cargarOpciones() {
+      fetch("http://localhost:8080/conductores")
+        .then(res => res.json())
+        .then(data => {
+          listaConductores = data;
+          selectConductor.innerHTML = '<option value="">Seleccionar conductor</option>';
+          data.forEach(c => {
+            selectConductor.innerHTML += `<option value="${c.id}">${c.nombres} ${c.apellidos}</option>`;
+          });
+        });
+
+      fetch("http://localhost:8080/vehiculos")
+        .then(res => res.json())
+        .then(data => {
+          listaVehiculos = data;
+          selectVehiculo.innerHTML = '<option value="">Seleccionar vehículo</option>';
+          data.forEach(v => {
+            selectVehiculo.innerHTML += `<option value="${v.id}">${v.marca} ${v.placa}</option>`;
+          });
+        });
+    }
+
+    function cargarRutas() {
+      fetch("http://localhost:8080/rutas")
+        .then(res => res.json())
+        .then(data => {
+          tabla.innerHTML = "";
+          data.forEach(r => {
+            const conductor = listaConductores.find(c => c.id === r.conductorId);
+            const vehiculo = listaVehiculos.find(v => v.id === r.vehiculoId);
+
+            const nombreConductor = conductor ? `${conductor.nombres} ${conductor.apellidos}` : r.conductorId;
+            const nombreVehiculo = vehiculo ? `${vehiculo.marca} ${vehiculo.placa}` : r.vehiculoId;
+
+            tabla.innerHTML += `
+              <tr>
+                <td>${r.nombreRuta}</td>
+                <td>${r.fecha}</td>
+                <td>${nombreConductor}</td>
+                <td>${nombreVehiculo}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" onclick="editarRuta('${r.id}')">Editar</button>
+                  <button class="btn btn-danger btn-sm" onclick="eliminarRuta('${r.id}')">Eliminar</button>
+                </td>
+              </tr>
+            `;
+          });
+        })
+        .catch(err => console.error("Error al cargar rutas:", err));
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const ruta = {
+        nombreRuta: document.getElementById("nombreRuta").value.trim(),
+        fecha: document.getElementById("fecha").value,
+        conductorId: selectConductor.value,
+        vehiculoId: selectVehiculo.value
+      };
+
+      if (!ruta.conductorId || !ruta.vehiculoId) {
+        alert("Debes seleccionar conductor y vehículo");
+        return;
+      }
+
+      if (modo === "crear") {
+        fetch("http://localhost:8080/rutas/registrar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ruta)
+        })
+        .then(res => res.json())
+        .then(response => {
+          if (response.error) {
+            alert("Error: " + response.error);
+          } else {
+            alert("Ruta registrada correctamente");
+            form.reset();
+            cargarRutas();
+          }
+        })
+        .catch(err => alert("Error al registrar: " + err.message));
+      } else if (modo === "editar" && idEditar) {
+        fetch(`http://localhost:8080/rutas/actualizar/${idEditar}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ruta)
+        })
+        .then(res => res.json())
+        .then(response => {
+          if (response.error) {
+            alert("Error: " + response.error);
+          } else {
+            alert(response.mensaje || "Ruta actualizada correctamente");
+            form.reset();
+            modo = "crear";
+            idEditar = null;
+            cargarRutas();
+          }
+        })
+        .catch(err => alert("Error al actualizar: " + err.message));
+      }
+    });
+
+    function editarRuta(id) {
+      fetch(`http://localhost:8080/rutas`)
+        .then(res => res.json())
+        .then(data => {
+          const ruta = data.find(r => r.id === id);
+          if (ruta) {
+            document.getElementById("nombreRuta").value = ruta.nombreRuta;
+            document.getElementById("fecha").value = ruta.fecha;
+            selectConductor.value = ruta.conductorId;
+            selectVehiculo.value = ruta.vehiculoId;
+            modo = "editar";
+            idEditar = id;
+          }
+        });
+    }
+
+    function eliminarRuta(id) {
+      if (confirm("¿Está seguro de eliminar esta ruta?")) {
+        fetch(`http://localhost:8080/rutas/eliminar/${id}`, { method: "DELETE" })
+          .then(res => res.json())
+          .then(response => {
+            if (response.error) {
+              alert("Error: " + response.error);
+            } else {
+              alert(response.mensaje || "Ruta eliminada correctamente");
+              cargarRutas();
+            }
+          })
+          .catch(err => alert("Error al eliminar: " + err.message));
+      }
+    }
+
+    cargarOpciones();
+    setTimeout(cargarRutas, 500); // dar tiempo a cargar opciones
+  </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.rutapaquetes.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rutapaquetes.model.Conductor;
+import com.rutapaquetes.model.RutaProgramada;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ConductorController {
 
     private final String archivoDatos = "conductores.json";
+    private final String archivoRutas = "rutas.json";
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/registrar")
@@ -51,6 +53,22 @@ public class ConductorController {
 
     @DeleteMapping("/eliminar/{id}")
     public String eliminarConductor(@PathVariable String id) {
+        // validar que NO esté asignado a ninguna ruta
+        try {
+            File fileRutas = new File(archivoRutas);
+            if (fileRutas.exists()) {
+                List<RutaProgramada> rutas = objectMapper.readValue(fileRutas, new TypeReference<List<RutaProgramada>>() {});
+                boolean asignado = rutas.stream()
+                        .anyMatch(r -> r.getConductorId().equals(id));
+                if (asignado) {
+                    return "No se puede eliminar: el conductor está asignado a una ruta programada.";
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error verificando asignaciones de ruta";
+        }
+
         List<Conductor> conductores = leerConductores();
         if (conductores.removeIf(c -> c.getId().equals(id))) {
             guardarConductores(conductores);

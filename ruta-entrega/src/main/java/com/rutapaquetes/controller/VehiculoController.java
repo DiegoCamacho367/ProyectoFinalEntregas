@@ -3,6 +3,7 @@ package com.rutapaquetes.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rutapaquetes.model.Vehiculo;
+import com.rutapaquetes.model.RutaProgramada;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -15,7 +16,8 @@ import java.util.List;
 public class VehiculoController {
 
     private final String archivoDatos = "vehiculos.json";
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final String archivoRutas = "rutas.json";
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/registrar")
     public String registrarVehiculo(@RequestBody Vehiculo vehiculo) {
@@ -51,6 +53,19 @@ public class VehiculoController {
 
     @DeleteMapping("/eliminar/{id}")
     public String eliminarVehiculo(@PathVariable String id) {
+        try {
+            File file = new File(archivoRutas);
+            if (file.exists()) {
+                List<RutaProgramada> rutas = objectMapper.readValue(file, new TypeReference<List<RutaProgramada>>() {});
+                boolean asignado = rutas.stream().anyMatch(r -> r.getVehiculoId().equals(id));
+                if (asignado) {
+                    return "No se puede eliminar, el vehículo está asignado a una ruta.";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         List<Vehiculo> vehiculos = leerVehiculos();
         if (vehiculos.removeIf(v -> v.getId().equals(id))) {
             guardarVehiculos(vehiculos);

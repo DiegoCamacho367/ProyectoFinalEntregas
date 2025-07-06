@@ -21,9 +21,16 @@
   "correo" : "peach@mariokart.com"
 }, {
   "id" : "CDT4",
-  "nombres" : "Toad",
-  "apellidos" : "Mushroom",
-  "numeroLicencia" : "MK-004",
-  "telefono" : "3004445566",
+  "nombres" : "Wario",
+  "apellidos" : "bros",
+  "numeroLicencia" : "MK-023",
+  "telefono" : "3213123123",
   "correo" : "toad@mariokart.com"
+}, {
+  "id" : "CDT5",
+  "nombres" : "Waluigui",
+  "apellidos" : "Bros",
+  "numeroLicencia" : "MK-303",
+  "telefono" : "32943872349",
+  "correo" : "ELWALUGIS@GMAIL.COM"
 } ]

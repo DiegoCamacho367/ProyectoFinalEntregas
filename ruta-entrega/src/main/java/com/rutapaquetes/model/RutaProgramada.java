@@ -7,10 +7,8 @@ public class RutaProgramada {
     private String fecha;
     private String nombreRuta;
 
-    // Constructor vacío
     public RutaProgramada() {}
 
-    // Constructor completo
     public RutaProgramada(String id, String conductorId, String vehiculoId, String fecha, String nombreRuta) {
         this.id = id;
         this.conductorId = conductorId;
@@ -19,7 +17,6 @@ public class RutaProgramada {
         this.nombreRuta = nombreRuta;
     }
 
-    // Getters y Setters
     public String getId() {
         return id;
     }

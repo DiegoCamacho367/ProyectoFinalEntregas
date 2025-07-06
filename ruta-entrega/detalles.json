@@ -1,32 +1,57 @@
 [ {
-  "id" : "DET1",
+  "id" : "DET2",
+  "rutaId" : "RUT2",
+  "direccion" : "Calle 41 Sur #85-03, Bogotá",
+  "descripcion" : "Entrega paquete Mario Kart",
+  "latitud" : 4.596268,
+  "longitud" : -74.151721
+}, {
+  "id" : "DET3",
+  "rutaId" : "RUT2",
+  "direccion" : "Carrera 80 #10A-15 Sur, Bogotá",
+  "descripcion" : "Entrega audífonos",
+  "latitud" : 4.608333,
+  "longitud" : -74.172222
+}, {
+  "id" : "DET4",
+  "rutaId" : "RUT2",
+  "direccion" : "Calle 57 Sur #73B-14, Bogotá",
+  "descripcion" : "Entrega videojuego FIFA",
+  "latitud" : 4.570924,
+  "longitud" : -74.16822
+}, {
+  "id" : "DET5",
+  "rutaId" : "RUT3",
+  "direccion" : "avenida gimenez",
+  "descripcion" : "Volantes CHISTOSOS",
+  "latitud" : 4.649046,
+  "longitud" : -74.159335
+}, {
+  "id" : "DET6",
+  "rutaId" : "RUT3",
+  "direccion" : "CL 41 SUR 85 03",
+  "descripcion" : "WASAAA",
+  "latitud" : 4.64479,
+  "longitud" : -74.162296
+}, {
+  "id" : "DET6",
   "rutaId" : "RUT1",
-  "direccion" : "Cl. 68D Bis Sur #49F-70",
-  "descripcion" : "Entrega de marihuana medicinal",
-  "latitud" :4.737498,
-  "longitud" :-74.053155
-
+  "direccion" : "las galias",
+  "descripcion" : "manillas",
+  "latitud" : 4.579377,
+  "longitud" : -74.161152
 }, {
-  "id": "DET2",
-    "rutaId": "RUT2",
-    "direccion": "Calle 41 Sur #85-03, Bogotá",
-    "descripcion": "Entrega paquete Mario Kart",
-    "latitud": 4.596268,
-    "longitud": -74.151721
-  
+  "id" : "DET7",
+  "rutaId" : "RUT5",
+  "direccion" : "el campin",
+  "descripcion" : "caparazones cupatrupa",
+  "latitud" : 4.652161,
+  "longitud" : -74.088012
 }, {
-   "id": "DET3",
-    "rutaId": "RUT2",
-    "direccion": "Carrera 80 #10A-15 Sur, Bogotá",
-    "descripcion": "Entrega audífonos",
-    "latitud": 4.608333,
-    "longitud": -74.172222
-},
-{
-     "id": "DET4",
-    "rutaId": "RUT2",
-    "direccion": "Calle 57 Sur #73B-14, Bogotá",
-    "descripcion": "Entrega videojuego FIFA",
-    "latitud": 4.570924,
-    "longitud": -74.168220
-  }]
+  "id" : "DET8",
+  "rutaId" : "RUT5",
+  "direccion" : "Zona Industrial",
+  "descripcion" : "gafas de sol",
+  "latitud" : 4.654178,
+  "longitud" : -74.145284
+} ]

@@ -10,4 +10,22 @@
   "vehiculoId" : "VEH2",
   "fecha" : "2025-04-02",
   "nombreRuta" : "Carrera Fantasma"
+}, {
+  "id" : "RUT3",
+  "conductorId" : "CDT4",
+  "vehiculoId" : "VEH3",
+  "fecha" : "2025-07-22",
+  "nombreRuta" : "Ruta chistosa"
+}, {
+  "id" : "RUT4",
+  "conductorId" : "CDT4",
+  "vehiculoId" : "VEH3",
+  "fecha" : "2025-07-21",
+  "nombreRuta" : "Campos mu mu"
+}, {
+  "id" : "RUT5",
+  "conductorId" : "CDT5",
+  "vehiculoId" : "VEH5",
+  "fecha" : "2025-07-21",
+  "nombreRuta" : "Ruta centro cocotero"
 } ]

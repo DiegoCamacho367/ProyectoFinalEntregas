@@ -4,14 +4,14 @@
   "modelo" : "Kart-Standard",
   "color" : "Rojo",
   "marca" : "Nintendo",
-  "capacidadCarga" : 200.0
+  "capacidadCarga" : 3000.0
 }, {
   "id" : "VEH2",
   "placa" : "MK-GREEN-02",
   "modelo" : "Kart-Standard",
   "color" : "Verde",
   "marca" : "Nintendo",
-  "capacidadCarga" : 180.0
+  "capacidadCarga" : 34000.0
 }, {
   "id" : "VEH3",
   "placa" : "MK-PINK-03",
@@ -28,16 +28,9 @@
   "capacidadCarga" : 150.0
 }, {
   "id" : "VEH5",
-  "placa" : "MK-BLUE-032",
-  "modelo" : "motocicleta",
-  "color" : "azul",
-  "marca" : "zelda",
-  "capacidadCarga" : 3000.0
-}, {
-  "id" : "VEH6",
-  "placa" : "qsdad",
-  "modelo" : "cafe",
-  "color" : "azul",
-  "marca" : "zelda",
-  "capacidadCarga" : 123123.0
+  "placa" : "WLG-302",
+  "modelo" : "CARRO GIGANTE",
+  "color" : "morado",
+  "marca" : "nintendo",
+  "capacidadCarga" : 36000.0
 } ]

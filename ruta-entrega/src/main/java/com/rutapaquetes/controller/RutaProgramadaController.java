@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rutapaquetes.model.Conductor;
 import com.rutapaquetes.model.Vehiculo;
 import com.rutapaquetes.model.RutaProgramada;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/rutas")
@@ -20,7 +20,8 @@ public class RutaProgramadaController {
     private final String archivoRutas = "rutas.json";
     private final String archivoConductores = "conductores.json";
     private final String archivoVehiculos = "vehiculos.json";
-    private ObjectMapper mapper = new ObjectMapper();
+    private final String archivoDetalles = "detalles.json";
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @GetMapping
     public List<RutaProgramada> listarRutas() {
@@ -32,10 +33,10 @@ public class RutaProgramadaController {
         List<RutaProgramada> rutas = leerRutas();
 
         if (!existeConductor(ruta.getConductorId())) {
-            return ResponseEntity.badRequest().body("No existe el conductor con id: " + ruta.getConductorId());
+            return ResponseEntity.badRequest().body(Map.of("error", "No existe el conductor con id: " + ruta.getConductorId()));
         }
         if (!existeVehiculo(ruta.getVehiculoId())) {
-            return ResponseEntity.badRequest().body("No existe el vehículo con id: " + ruta.getVehiculoId());
+            return ResponseEntity.badRequest().body(Map.of("error", "No existe el vehículo con id: " + ruta.getVehiculoId()));
         }
 
         ruta.setId("RUT" + (rutas.size() + 1));
@@ -47,38 +48,51 @@ public class RutaProgramadaController {
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizarRuta(@PathVariable String id, @RequestBody RutaProgramada actualizada) {
         List<RutaProgramada> rutas = leerRutas();
+
         for (RutaProgramada r : rutas) {
             if (r.getId().equals(id)) {
                 if (!existeConductor(actualizada.getConductorId())) {
-                    return ResponseEntity.badRequest().body("No existe el conductor con id: " + actualizada.getConductorId());
+                    return ResponseEntity.badRequest().body(Map.of("error", "No existe el conductor con id: " + actualizada.getConductorId()));
                 }
                 if (!existeVehiculo(actualizada.getVehiculoId())) {
-                    return ResponseEntity.badRequest().body("No existe el vehículo con id: " + actualizada.getVehiculoId());
+                    return ResponseEntity.badRequest().body(Map.of("error", "No existe el vehículo con id: " + actualizada.getVehiculoId()));
                 }
                 r.setConductorId(actualizada.getConductorId());
                 r.setVehiculoId(actualizada.getVehiculoId());
                 r.setFecha(actualizada.getFecha());
                 r.setNombreRuta(actualizada.getNombreRuta());
                 guardarRutas(rutas);
-                return ResponseEntity.ok("Ruta actualizada correctamente");
+                return ResponseEntity.ok(Map.of("mensaje", "Ruta actualizada correctamente"));
             }
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ruta no encontrada");
+        return ResponseEntity.status(404).body(Map.of("error", "Ruta no encontrada"));
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarRuta(@PathVariable String id) {
+        // Validar que no tenga detalles asignados
+        try {
+            File fileDetalles = new File(archivoDetalles);
+            if (fileDetalles.exists()) {
+                var detalles = mapper.readValue(fileDetalles, new TypeReference<List<Object>>() {});
+                boolean tieneDetalles = detalles.stream()
+                        .anyMatch(d -> ((java.util.LinkedHashMap)d).get("rutaId").equals(id));
+                if (tieneDetalles) {
+                    return ResponseEntity.badRequest().body(Map.of("error","No se puede eliminar la ruta porque tiene detalles asignados"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error","Error validando detalles de ruta"));
+        }
+
         List<RutaProgramada> rutas = leerRutas();
         if (rutas.removeIf(r -> r.getId().equals(id))) {
             guardarRutas(rutas);
-            return ResponseEntity.ok("Ruta eliminada correctamente");
+            return ResponseEntity.ok(Map.of("mensaje", "Ruta eliminada correctamente"));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ruta no encontrada");
+        return ResponseEntity.status(404).body(Map.of("error","Ruta no encontrada"));
     }
-
-    // ----------------------------------------------------------
-    // MÉTODO PARA FILTRAR rutas por vehiculo, conductor, fecha
-    // ----------------------------------------------------------
 
     @GetMapping("/buscar")
     public List<RutaProgramada> buscarRutas(
@@ -88,17 +102,17 @@ public class RutaProgramadaController {
     ) {
         List<RutaProgramada> rutas = leerRutas();
 
-        if (vehiculo != null) {
+        if (vehiculo != null && !vehiculo.isEmpty()) {
             rutas = rutas.stream()
                     .filter(r -> r.getVehiculoId().equalsIgnoreCase(vehiculo))
                     .toList();
         }
-        if (conductor != null) {
+        if (conductor != null && !conductor.isEmpty()) {
             rutas = rutas.stream()
                     .filter(r -> r.getConductorId().equalsIgnoreCase(conductor))
                     .toList();
         }
-        if (fecha != null) {
+        if (fecha != null && !fecha.isEmpty()) {
             rutas = rutas.stream()
                     .filter(r -> r.getFecha().equals(fecha))
                     .toList();
@@ -107,7 +121,7 @@ public class RutaProgramadaController {
     }
 
     // ----------------------------------------------------------
-    // MÉTODOS PRIVADOS lectura / escritura de archivos
+    // MÉTODOS PRIVADOS
     // ----------------------------------------------------------
 
     private List<RutaProgramada> leerRutas() {

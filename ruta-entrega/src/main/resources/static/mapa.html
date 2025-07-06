@@ -5,31 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mapa de Ruta de Entregas</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+  />
   <style>
-    #map { height: 100vh; }
+    #map { height: 90vh; }
   </style>
 </head>
-<body>
+<body class="container mt-4">
+  <h1>Mapa de Entregas</h1>
+  <div class="mb-3">
+    <label for="rutaSelect" class="form-label">Selecciona la ruta:</label>
+    <select id="rutaSelect" class="form-select">
+      <option value="">-- Selecciona una ruta --</option>
+    </select>
+    <button class="btn btn-primary mt-2" onclick="cargarMapa()">Mostrar Ruta</button>
+  </div>
+
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
   <script>
-    // Coordenadas de la sede tecnológica
-    const bodega = [4.5806037, -74.1579202];
+    const bodega = L.latLng(4.5806037, -74.1579202);
+    const map = L.map('map').setView(bodega, 14);
 
-    // Iniciamos el mapa centrado en la bodega con zoom 16
-    const map = L.map('map').setView(bodega, 16);
-
-    // Capa base OSM
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Marcador de la bodega
+    let control = null;
+
+    // Inicial marcando la bodega
     L.marker(bodega)
       .addTo(map)
       .bindPopup("Universidad Distrital Sede Tecnológica - Punto fijo de salida")
       .openPopup();
+
+    // cargar select de rutas
+    fetch("http://localhost:8080/rutas")
+      .then(res => res.json())
+      .then(rutas => {
+        const rutaSelect = document.getElementById("rutaSelect");
+        rutas.forEach(r => {
+          rutaSelect.innerHTML += `<option value="${r.id}">${r.nombreRuta} (${r.id})</option>`;
+        });
+      })
+      .catch(err => console.error(err));
+
+    function cargarMapa() {
+      const rutaId = document.getElementById("rutaSelect").value;
+      if (!rutaId) {
+        alert("Debes seleccionar una ruta");
+        return;
+      }
+
+      fetch(`http://localhost:8080/detalles?rutaId=${rutaId}`)
+        .then(res => res.json())
+        .then(detalles => {
+          if (!Array.isArray(detalles) || detalles.length === 0) {
+            alert("No hay puntos para esta ruta");
+            if (control) {
+              map.removeControl(control);
+              control = null;
+            }
+            return;
+          }
+
+          // filtrar puntos inválidos
+          const waypoints = [bodega];
+          detalles.forEach(d => {
+            if (d.latitud && d.longitud) {
+              waypoints.push(L.latLng(d.latitud, d.longitud));
+            }
+          });
+
+          if (waypoints.length === 1) {
+            alert("Los detalles no tienen coordenadas válidas");
+            return;
+          }
+
+          if (control) {
+            map.removeControl(control);
+          }
+
+          control = L.Routing.control({
+            waypoints: waypoints,
+            router: L.Routing.osrmv1({
+              serviceUrl: 'https://router.project-osrm.org/route/v1'
+            }),
+            lineOptions: {
+              styles: [{color: 'blue', weight: 4}]
+            },
+            createMarker: function(i, wp) {
+              if (i === 0) {
+                return L.marker(wp.latLng, { 
+                  icon: L.icon({
+                    iconUrl: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-red.png",
+                    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                  })
+                }).bindPopup("Universidad Distrital - Bodega");
+              } else {
+                const info = detalles[i-1];
+                return L.marker(wp.latLng, { 
+                  icon: L.icon({
+                    iconUrl: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png",
+                    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                  })
+                }).bindPopup(
+                  info
+                    ? `<b>${info.direccion}</b><br/>${info.descripcion}`
+                    : "Punto de entrega"
+                );
+              }
+            }
+          }).addTo(map);
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Error al cargar los detalles de la ruta");
+        });
+    }
   </script>
 </body>
 </html>
